@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Pierre papier ciseaux avec Gwonam</title>
+        <meta charset="UTF-8"/>
+        <script src="jquery.min.js"></script>
+		<!-- Le script au-dessus me permet de faire le changement de tableau quand Gwonam a fait ses 4 duels, ce qui me permet de basculer juste après au tableau des scores depuis le tableau de jeu et vice-versa! :D -->
+		<link rel="stylesheet" href="Pierre-Papier-Ciseau avec Gwonam.css">
+        <style>
+		
+			.logo { 
+			width: 250px;
+			height: 250px;
+			margin:auto;
+			position:absolute;
+			float:right;
+			top:0;
+			right:0;
+			cursor:url('gwonam_curseur_button.cur'), auto;
+			}
+			
+			
+            #taillebouton {
+                width: 250px;
+                height: 250px;
+            }
+ 
+            button {
+                display: inline-block;
+				cursor:url('gwonam_curseur_button.cur'), auto;
+            }
+ 
+            #block-jeu {
+                display:block;
+				cursor:url('gwonam_curseur.cur'), auto;
+            }
+        </style>
+		
+		
+		
+
+    </head>
+    <body>
+	
+<div class="logo">
+<img class="LogoAnimation" src="Logo Pierre-Papier-Ciseaux avec Gwonam.png" width="250" height="250">
+</div>
+
+	<p style="color:#6b0000 ;text-shadow:3px 3px 2px 2px black;cursor:url('gwonam_curseur_grap.cur'), auto;" >
+	<u>Histoire inutile:</u> 
+	Gwonam ne sait pas trop quoi faire de sa journée après avoir casser son tapis un Dimanche, <br> il décide donc de faire des parties de 4 duels de pierre-papier-ciseaux avec un ordinateur ayant l'apparence d'un parchemin qui ne sait faire que ça!<br>
+	</p> <br>
+	<center>
+        <div id="block-jeu">
+                 <div class="button"><button id="pierre"><img src="Gwonam pierre.png" id="taillebouton"></button></div>
+                 <div class="button"><button id="papier"><img src="Gwonam papier.png" id="taillebouton"></button></div>
+                 <div class="button"><button id="ciseaux"><img src="Gwonam ciseau.png" id="taillebouton"></button></div>
+            <div id="statut-jeu"></div>
+        </div>
+         
+<script type="text/javascript" align="center">
+
+    // création de la classe affichage des différents messages
+    var Afficheur = function(element) {
+        var display = element; // cette variable est chargée de prendre l'élement passer au niveau du constructeur
+   
+        function setText(message) { // chargée de modifier le contenu de l'element passé dans le constructeur par un message qui lui sera passé
+            display.innerHTML = message; // methode qui change le texte htlm de l'élement par le message
+        }
+        return {sendMessage : setText};
+    }
+  
+    var scoreOrdinateur = 0;
+    var scoreGwonam = 0;
+   
+    function comparer(_choixOrdi, _choixGwonam) {
+   
+        if(_choixGwonam == _choixOrdi) {
+            afficheur.sendMessage("Il y a égalité :/ .</br>L'ordinateur a choisi " + _choixOrdi);
+        }
+        else if((_choixGwonam == "pierre" && _choixOrdi == "ciseaux") || (_choixGwonam == "ciseaux" && _choixOrdi == "papier")) {
+            afficheur.sendMessage("Vous avez gagné =D .</br>L'ordinateur a choisi " + _choixOrdi);
+            scoreGwonam++;
+        }
+		
+
+		else if(_choixGwonam == "papier" && _choixOrdi == "pierre") {
+            afficheur.sendMessage("Vous avez gagné =D .</br>L'ordinateur a choisi " + _choixOrdi );
+            scoreGwonam++;
+        }
+		
+		
+		
+		
+        else if((_choixGwonam == "papier" && _choixOrdi == "ciseaux") || (_choixGwonam == "pierre" && _choixOrdi == "papier") || (_choixGwonam == "ciseaux" && _choixOrdi == "pierre")) {
+            afficheur.sendMessage("Vous avez perdu :'( .</br>L'ordinateur a choisi " + _choixOrdi);
+            scoreOrdinateur++;
+		}
+
+		else if(_choixGwonam == "ciseaux" && _choixOrdi == "pierre") {
+            afficheur.sendMessage("Vous avez perdu :'( .</br>L'ordinateur a choisi " + _choixOrdi);
+            scoreOrdinateur++;
+		}
+        }
+   
+    var afficheur = new Afficheur(document.querySelector("#statut-jeu")); // création de l'objet qui va modifier le texte du résultat du jeu
+   
+    function FchoixOrdi() {
+        var choixOrdi = Math.floor(Math.random() * 51);
+   
+            if (choixOrdi < 20) {
+                choixOrdi = "pierre";
+            }
+            else if(choixOrdi > 20 && choixOrdi < 40) {
+                choixOrdi = "papier";
+            }
+            else if(choixOrdi > 40) {
+                choixOrdi = "ciseaux";
+            }
+            return choixOrdi;
+    }
+   
+    function FchoixGwonam(_choixGwonam) {
+   
+            if(_choixGwonam == "pierre") {
+                _choixGwonam = "pierre";
+            }
+            else if(_choixGwonam == "papier") {
+                _choixGwonam = "papier";
+            }
+            else if(_choixGwonam == "ciseaux") {
+                _choixGwonam = "ciseaux";
+            }
+            return _choixGwonam;
+    }
+ 
+    function nouvellePartie(){
+        scoreOrdinateur = 0;
+        scoreGwonam = 0;
+        $('#block-jeu button').css('display', 'inline-block','color:darkmagenta');
+        afficheur.sendMessage("Nous sommes partis =D </br> Choisissez l'offensive");
+    }
+   
+    function main() {
+   
+        // déclaration de notre tableau pions qui va contenir l'ensemble des boutons
+        var tabchoixGwonam = document.querySelectorAll("#block-jeu button"); // la méthode va selectionner tous les boutons présent dans la div block-jeu et les retourner dans notre tableau pions
+   
+        for(var i = 0, taille = tabchoixGwonam.length; i < taille; i++){
+ 
+            var finJeu = 0;
+   
+            afficheur.sendMessage("Le jeu peut commencer.</br> Choisissez l'offensive"); // modification du message + choix du joueur
+   
+            tabchoixGwonam[i].addEventListener("click", function(){
+                choixGwonam = this.id;
+   
+                var choixG = FchoixGwonam(choixGwonam);
+                var choixO = FchoixOrdi();
+                comparer(choixO, choixG);
+
+                finJeu++;
+  
+                    if(finJeu >= 4){
+                        $('#block-jeu button').css('display', 'none');
+                        afficheur.sendMessage("<u></br>Le jeu est fini</u></br>Ordi : " + scoreOrdinateur + "</br>Gwonam : " + scoreGwonam + "<br>"+"<button onclick='nouvellePartie()'>Squalala,sommes-nous repartit ?</button>"); 
+                        finJeu = 0;
+                    }
+            });
+        }
+    }
+   
+    main();
+   
+   
+</script>
+	</center>
+	
+	<div class="Gwonam">
+<img class="GwonamAnimation" src="Gwonam.png" width="250" height="250">
+</div>
+    </body>
+</html>
